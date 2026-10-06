@@ -1,0 +1,12 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+const root=fileURLToPath(new URL('../',import.meta.url));
+const vendor=path.join(root,'dist/vendor'); fs.mkdirSync(vendor,{recursive:true});
+for (const file of ['leaflet.js','leaflet.css']) fs.copyFileSync(path.join(root,'node_modules/leaflet/dist',file),path.join(vendor,file));
+fs.cpSync(path.join(root,'node_modules/leaflet/dist/images'),path.join(vendor,'images'),{recursive:true});
+fs.copyFileSync(path.join(root,'node_modules/leaflet/LICENSE'),path.join(vendor,'LEAFLET-LICENSE.txt'));
+const logo=path.join(root,'../Assets/stfdlogo.png');
+if(fs.existsSync(logo)) fs.copyFileSync(logo,path.join(root,'dist/stfdlogo.png'));
+for(const name of ['index.html','app.mjs','practice-context.mjs','styles.css','data/streets.json','data/boundaries.geojson','data/map-context.geojson','stfdlogo.png']) if(!fs.existsSync(path.join(root,'dist',name))) throw new Error(`Missing ${name}`);
+console.log('Static application ready in dist/.');
